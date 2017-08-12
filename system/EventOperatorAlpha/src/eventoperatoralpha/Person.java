@@ -13,8 +13,8 @@ import javafx.beans.property.SimpleStringProperty;
  */
 public class Person {
     private Integer number;
-    private SimpleStringProperty name;
-    private SimpleStringProperty notes;
+    private final SimpleStringProperty name;
+    private final SimpleStringProperty notes;
     
     public Person(int number, String name, String notes) {
         this.number = number;

@@ -6,12 +6,11 @@
 package eventoperatoralpha;
 
 import javafx.application.Application;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.*;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.*;
 import javafx.scene.control.*;
-import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.cell.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
@@ -24,8 +23,8 @@ import javafx.stage.*;
 public class EventOperatorAlpha extends Application {
     
     private final TableView<Person> mainTable = new TableView<>();
-    private final PersonData personData = new PersonData();
-    private ObservableList<Person> data;
+    private final PersonManager personManager = new PersonManager();
+    private ObservableList<Person> personObservableList;
     
     
     /**
@@ -38,7 +37,7 @@ public class EventOperatorAlpha extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        data = this.personData.getPersonDataList();
+        personObservableList = this.personManager.getPersonManagerList();
         
         //create main window
         Scene mainScene = new Scene(new Group());
@@ -46,49 +45,89 @@ public class EventOperatorAlpha extends Application {
         primaryStage.setWidth(500);
         primaryStage.setHeight(600);
         
-        
-        //create title label
-        final Label titleLabel = new Label("EventOperator Alpha");
-        titleLabel.setFont(new Font("Arial", 20));
-        
-        
         //create cell
         mainTable.setEditable(true);
+        mainTable.setItems(personObservableList);
+        mainTable.getColumns().addAll(
+                this.createPersonNumberCol(), this.createPersonNameCol(), this.createPersonNotesCol());
+        
+        //set layout
+        final VBox mainVbox = new VBox();
+        mainVbox.setSpacing(5);
+        mainVbox.setPadding(new Insets(0, 0, 0, 0));
+        mainVbox.getChildren().addAll(this.createTopMenuHbox(), mainTable);
+        
+        ((Group) mainScene.getRoot()).getChildren().addAll(mainVbox);
+        
+        primaryStage.setScene(mainScene);
+        primaryStage.show();
+        
+    }
+    
+    private HBox createTopMenuHbox() {
+        
+        //create hbox instance
+        HBox topMenu = new HBox();
+        topMenu.setPadding(new Insets(15, 12, 15, 12));
+        topMenu.setSpacing(10);
+        topMenu.setStyle("-fx-background-color: #eeeeee;");
+        
+        //create file import button
+        Button importButton = new Button("ロード");
+        importButton.setPrefSize(100, 20);
+        importButton.setOnAction((ActionEvent e) -> {
+            this.personManager.add(new Person(100, "岡本　直樹", "aa"));
+        });
+        
+        //create file save button
+        Button saveButton = new Button("セーブ");
+        saveButton.setPrefSize(100, 20);
+        saveButton.setOnAction((ActionEvent e) -> {
+            for(Person p : this.personManager.getPersonManagerList()) {
+                System.out.println("name: " + p.getName() + ", note: " + p.getNotes()); //<<start from here, i dont know why 備考 sell cannot update 201720812
+            }
+        });
+        
+        //create file export button
+        Button exportButton = new Button("PDFに出力");
+        exportButton.setPrefSize(100, 20);
+        
+        topMenu.getChildren().addAll(importButton, saveButton, exportButton);
+        
+        return topMenu;
+    }
+    
+    private TableColumn createPersonNumberCol() {
         
         TableColumn personNumberCol = new TableColumn("番号");
         personNumberCol.setMinWidth(50);
         personNumberCol.setCellValueFactory(
             new PropertyValueFactory<>("number"));
         
+        return personNumberCol;
+    
+    }
+    
+    private TableColumn createPersonNameCol() {
+        
         TableColumn personNameCol = new TableColumn("氏名");
         personNameCol.setMinWidth(100);
         personNameCol.setCellValueFactory(
             new PropertyValueFactory<>("name"));
+        
+        return personNameCol;
+        
+    }
+    
+    private TableColumn createPersonNotesCol() {
         
         TableColumn<Person, String> personNotesCol = new TableColumn<>("備考");
         personNotesCol.setMinWidth(300);
         personNotesCol.setCellValueFactory(
             new PropertyValueFactory<>("notes"));
         personNotesCol.setCellFactory(TextFieldTableCell.<Person>forTableColumn());
-        personNameCol.setOnEditCommit(
-            null
-        );
         
-        mainTable.setItems(data);
-        mainTable.getColumns().addAll(
-                personNumberCol, personNameCol, personNotesCol);
-        
-        
-        //set layout
-        final VBox mainVbox = new VBox();
-        mainVbox.setSpacing(5);
-        mainVbox.setPadding(new Insets(10, 0, 0, 10));
-        mainVbox.getChildren().addAll(titleLabel, mainTable);
-        
-        ((Group) mainScene.getRoot()).getChildren().addAll(mainVbox);
-        
-        primaryStage.setScene(mainScene);
-        primaryStage.show();
+        return personNotesCol;
         
     }
 }

@@ -12,10 +12,10 @@ import javafx.collections.ObservableList;
  *
  * @author okamotonaoki
  */
-public class PersonData {
+public class PersonManager {
     private final ObservableList<Person> data = FXCollections.observableArrayList();
     
-    public PersonData() {
+    public PersonManager() {
         
         for(int i = 0; i < 20; i++) {
             data.add(new Person(i, "tmptmp", ""));
@@ -23,7 +23,11 @@ public class PersonData {
         
     }
     
-    public ObservableList<Person> getPersonDataList() {
+    public void add(Person person) {
+        data.add(person);
+    }
+    
+    public ObservableList<Person> getPersonManagerList() {
         return this.data;
     }
     
