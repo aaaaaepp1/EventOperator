@@ -5,6 +5,7 @@
  */
 package eventoperatoralpha;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -18,9 +19,13 @@ public class PersonManager {
     public PersonManager() {
         
         for(int i = 0; i < 20; i++) {
-            data.add(new Person(i, "tmptmp", ""));
+            data.add(new Person(i, "tmptmp" + i, ""));
         }
         
+    }
+    
+    public void editNotes(int number, String note) {
+        this.data.get(number).setNotes(note);
     }
     
     public void add(Person person) {

@@ -43,6 +43,6 @@ public class Person {
     }
     
     public void setNotes(String notes) {
-        this.name.set(notes);
+        this.notes.set(notes);
     }
 }

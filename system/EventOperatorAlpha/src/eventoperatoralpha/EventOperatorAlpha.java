@@ -37,7 +37,7 @@ public class EventOperatorAlpha extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        personObservableList = this.personManager.getPersonManagerList();
+        this.personObservableList = this.personManager.getPersonManagerList();
         
         //create main window
         Scene mainScene = new Scene(new Group());
@@ -46,9 +46,9 @@ public class EventOperatorAlpha extends Application {
         primaryStage.setHeight(600);
         
         //create cell
-        mainTable.setEditable(true);
-        mainTable.setItems(personObservableList);
-        mainTable.getColumns().addAll(
+        this.mainTable.setEditable(true);
+        this.mainTable.setItems(personObservableList);
+        this.mainTable.getColumns().addAll(
                 this.createPersonNumberCol(), this.createPersonNameCol(), this.createPersonNotesCol());
         
         //set layout
@@ -76,7 +76,7 @@ public class EventOperatorAlpha extends Application {
         Button importButton = new Button("ロード");
         importButton.setPrefSize(100, 20);
         importButton.setOnAction((ActionEvent e) -> {
-            this.personManager.add(new Person(100, "岡本　直樹", "aa"));
+            this.mainTable.sort();
         });
         
         //create file save button
@@ -84,7 +84,7 @@ public class EventOperatorAlpha extends Application {
         saveButton.setPrefSize(100, 20);
         saveButton.setOnAction((ActionEvent e) -> {
             for(Person p : this.personManager.getPersonManagerList()) {
-                System.out.println("name: " + p.getName() + ", note: " + p.getNotes()); //<<start from here, i dont know why 備考 sell cannot update 201720812
+                System.out.println("name: " + p.getName() + ", note: " + p.getNotes());
             }
         });
         
@@ -104,8 +104,9 @@ public class EventOperatorAlpha extends Application {
         personNumberCol.setCellValueFactory(
             new PropertyValueFactory<>("number"));
         
+        
         return personNumberCol;
-    
+        
     }
     
     private TableColumn createPersonNameCol() {
@@ -126,6 +127,9 @@ public class EventOperatorAlpha extends Application {
         personNotesCol.setCellValueFactory(
             new PropertyValueFactory<>("notes"));
         personNotesCol.setCellFactory(TextFieldTableCell.<Person>forTableColumn());
+        personNotesCol.setOnEditCommit(((event) -> {
+            this.personManager.editNotes(event.getTablePosition().getRow(), event.getNewValue());
+        }));
         
         return personNotesCol;
         
